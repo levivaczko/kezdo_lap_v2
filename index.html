@@ -517,7 +517,7 @@
                             ${item.sub ? `<span class="tile-sub">${esc(item.sub)}</span>` : ''}
                         </span>
                     </span>
-                    ${isCardNew(item) ? '<span class="tile-new" aria-label="Új"></span>' : ''}
+                    ${opts.newDot !== false && isCardNew(item) ? '<span class="tile-new" aria-label="Új"></span>' : ''}
                     ${alert ? ALERT_SVG : ''}
                 </a>`;
             }).join('');
@@ -931,7 +931,7 @@
         function renderAll(data) {
             siteData = data || {};
             renderCalendar(siteData.esemenyek);
-            const hasKisokos = renderTiles('kisokos-grid', siteData.kisokos, MAX_KISOKOS, { marks: true });
+            const hasKisokos = renderTiles('kisokos-grid', siteData.kisokos, MAX_KISOKOS, { marks: true, newDot: false });
             if (!hasKisokos) document.querySelector('.top-row').style.gridTemplateColumns = 'minmax(0, 1fr)';
             renderPrompts(siteData.promptok);
             renderTiles('blue-grid', siteData.kekSav, MAX_BLUE);
