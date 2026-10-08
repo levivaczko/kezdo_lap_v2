@@ -5,8 +5,7 @@
             "title": "AI jelölési kötelezettség",
             "sub": "Új szabályzat",
             "link": "#",
-            "mark": true,
-            "date": "2026-10-02"
+            "mark": true
         },
         {
             "img": "img/help.png",
@@ -31,11 +30,11 @@
     "promptok": [
         {
             "title": "Meeting összefoglaló",
-            "text": "Foglald össze az alábbi megbeszélés jegyzetét 5 pontban. Külön listázd a döntéseket, és a teendőket felelőssel és határidővel.\n\nJegyzet: [ide másold a jegyzetet]"
+            "text": "Foglald össze 5 pontban az alábbi megbeszélést. Külön listázd a döntéseket és a teendőket felelőssel.\n\nJegyzet: [ide másold]"
         },
         {
             "title": "Udvarias e-mail válasz",
-            "text": "Írj udvarias, tömör választ az alábbi e-mailre. A hangnem legyen [hivatalos / közvetlen]. Ezt szeretném üzenni: [a lényeg]\n\nE-mail: [ide másold]"
+            "text": "Írj udvarias, tömör választ erre az e-mailre, [hivatalos / közvetlen] hangnemben. A lényeg: [mit üzensz]\n\nE-mail: [ide másold]"
         },
         {
             "title": "Excel képlet magyarázat",
@@ -43,7 +42,7 @@
         },
         {
             "title": "Vezetői kivonat",
-            "text": "Készíts egyoldalas vezetői összefoglalót az alábbi dokumentumból.\n\nSzerkezet:\n1. Fő megállapítások (max. 5 pont)\n2. Kockázatok és nyitott kérdések\n3. Javasolt következő lépések felelőssel\n\nStílus: tömör, magyar nyelvű, szakzsargon nélkül. Legfeljebb 200 szó. Ha valami nem derül ki a szövegből, jelezd, ne találd ki.\n\nDokumentum: [dokumentum szövege]"
+            "text": "Készíts vezetői összefoglalót: fő megállapítások, kockázatok, következő lépések. Max. 200 szó, szakzsargon nélkül.\n\n[dokumentum szövege]"
         }
     ],
     "kekSav": [
