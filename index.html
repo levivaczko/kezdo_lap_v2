@@ -143,7 +143,7 @@
     .band-more svg { width: 14px; height: 14px; }
     .band-more:hover { transform: translateX(3px); background: #000; }
     /* hoverkor a "top"-ot mozgatjuk, nem transformot: így a szöveg végig éles marad */
-    .prompt-card { position: relative; top: 0; display: flex; flex-direction: column; min-height: 230px; background: #fff; border-radius: 8px; padding: 16px 18px 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.10); min-width: 0; transition: top 0.5s var(--ease), box-shadow 0.5s var(--ease); }
+    .prompt-card { position: relative; top: 0; display: flex; flex-direction: column; min-height: 246px; background: #fff; border-radius: 8px; padding: 16px 18px 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.10); min-width: 0; transition: top 0.5s var(--ease), box-shadow 0.5s var(--ease); }
     .prompt-card:hover { top: -4px; box-shadow: 0 12px 24px rgba(0,0,0,0.18); }
     .prompt-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
     .prompt-title { font-size: 15px; font-weight: 600; line-height: 1.3; min-width: 0; overflow-wrap: break-word; }
@@ -153,8 +153,15 @@
     .prompt-copy:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
     .prompt-copy.is-done { background: #1f8f4e; border-color: #1f8f4e; color: #fff; }
     .prompt-copy.is-fail { background: #fff4f4; border-color: var(--red); color: var(--red); }
-    .prompt-text { font-size: 14px; line-height: 1.55; color: #555; white-space: normal; overflow-wrap: break-word; display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
-    .prompt-card.is-open .prompt-text { display: block; -webkit-line-clamp: unset; cursor: text; white-space: pre-line; }
+    /* a sortörések összecsukva is látszanak, így kinyitáskor nem ugrik semmi */
+    .prompt-text { font-size: 14px; line-height: 1.55; color: #555; white-space: pre-line; overflow-wrap: break-word; display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; }
+    .prompt-card.is-clamped .prompt-text, .prompt-card.is-open .prompt-text { cursor: pointer; }
+    #prompt-grid { align-items: start; }   /* kinyitáskor csak az adott kártya nő meg */
+    .prompt-card.is-open .prompt-text { display: block; -webkit-line-clamp: unset; }
+    /* csak akkor látszik, ha a szöveg tényleg le van vágva (vagy épp ki van nyitva) */
+    .prompt-toggle { display: none; align-self: flex-start; margin-top: 8px; padding: 0; border: none; background: none; font-family: inherit; font-size: 13px; font-weight: 600; color: var(--blue); cursor: pointer; }
+    .prompt-toggle:hover { text-decoration: underline; }
+    .prompt-card.is-clamped .prompt-toggle, .prompt-card.is-open .prompt-toggle { display: inline-block; }
     .prompt-text .ph { background: rgba(255, 209, 0, 0.45); color: inherit; border-radius: 3px; padding: 0 2px; }
     .prompt-card.is-skeleton { pointer-events: none; }
     .prompt-card.is-skeleton .prompt-title { height: 16px; width: 60%; }
@@ -539,8 +546,27 @@
                         <h3 class="prompt-title">${esc(p.title || 'Prompt')}</h3>
                         <button type="button" class="prompt-copy" data-i="${i}" aria-label="${esc(p.title || 'Prompt')} másolása">${ICON_COPY}<span>Másolás</span></button>
                     </div>
-                    <p class="prompt-text" title="Kattints a teljes szövegért">${promptHtml(p.text)}</p>
+                    <p class="prompt-text">${promptHtml(p.text)}</p>
+                    <button type="button" class="prompt-toggle" aria-expanded="false">Teljes szöveg ▾</button>
                 </article>`).join('');
+            // levágott-e a szöveg? (szélességváltáskor és a betűtípus betöltése után újra megnézzük)
+            const check = () => grid.querySelectorAll('.prompt-card').forEach(card => {
+                if (card.classList.contains('is-open')) return;
+                const t = card.querySelector('.prompt-text');
+                card.classList.toggle('is-clamped', t.scrollHeight > t.clientHeight + 2);
+            });
+            let raf = 0;
+            new ResizeObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(check); }).observe(grid);
+            if (document.fonts && document.fonts.ready) document.fonts.ready.then(check);
+            check();
+        }
+
+        function setPromptOpen(card, open) {
+            card.classList.toggle('is-open', open);
+            if (!open) card.classList.add('is-clamped');
+            const tg = card.querySelector('.prompt-toggle');
+            tg.textContent = open ? 'Kevesebb ▴' : 'Teljes szöveg ▾';
+            tg.setAttribute('aria-expanded', String(open));
         }
 
         async function copyText(text) {
@@ -563,8 +589,12 @@
             const btn = e.target.closest('.prompt-copy');
             const card = e.target.closest('.prompt-card');
             if (!card) return;
-            if (!btn) {                                   // a szövegre kattintva kinyílik a teljes prompt
-                if (e.target.closest('.prompt-text') && !window.getSelection().toString()) card.classList.toggle('is-open');
+            if (!btn) {
+                // kinyitás/becsukás: a gombbal, vagy a levágott szövegre kattintva (kijelölés közben nem)
+                const canToggle = card.classList.contains('is-clamped') || card.classList.contains('is-open');
+                const onToggle = e.target.closest('.prompt-toggle');
+                const onText = e.target.closest('.prompt-text') && !window.getSelection().toString();
+                if (canToggle && (onToggle || onText)) setPromptOpen(card, !card.classList.contains('is-open'));
                 return;
             }
             const p = promptList[+btn.dataset.i];
@@ -576,7 +606,7 @@
                 btn.innerHTML = ICON_CHECK + '<span>Másolva</span>';
             } else {
                 // Végső tartalék: kinyitjuk és kijelöljük a szöveget, a felhasználó Ctrl+C-vel másolja
-                card.classList.add('is-open');
+                setPromptOpen(card, true);
                 const range = document.createRange();
                 range.selectNodeContents(card.querySelector('.prompt-text'));
                 const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
@@ -820,30 +850,25 @@
             const value = c => c <= TARGET ? c / TARGET : 1 - 0.65 * (c - TARGET) / (1 - TARGET);
             const inside = (c, p) => (p[0] - c.x) ** 2 + (p[1] - c.y) ** 2 <= c.r * c.r;
 
-            const anchors = [];
-            // blokk szintű pontok, a blokkon kívül is (a régi képeken a kör közepe a csempén kívül volt)
-            for (const fx of [-0.6, -0.3, 0, 0.25, 0.5, 0.75, 1, 1.3, 1.6]) for (const fy of [-0.6, -0.2, 0.25, 0.5, 0.75, 1.2, 1.6]) anchors.push([fx * W, fy * H]);
-            R.forEach(t => {
-                const o = 0.3 * Math.min(t.w, t.h);
-                anchors.push([t.x, t.y], [t.x + t.w, t.y], [t.x, t.y + t.h], [t.x + t.w, t.y + t.h],
-                    [t.x + t.w / 2, t.y], [t.x + t.w / 2, t.y + t.h], [t.x, t.y + t.h / 2], [t.x + t.w, t.y + t.h / 2],
-                    [t.x - o, t.y + t.h / 2], [t.x + t.w + o, t.y + t.h / 2], [t.x + t.w / 2, t.y - o], [t.x + t.w / 2, t.y + t.h + o]);
-            });
-            const unit = Math.min(Math.max(W, H), Math.max(H, 360));
+            // Minden blokkban ugyanaz a kör: a blokk közepén, kicsit a közép fölött, sugara a hosszabbik
+            // oldal ~38%-a. Csak annyit mozdulhat el, amennyi ahhoz kell, hogy a szövegek kékre essenek.
+            const horiz = W >= H, long = horiz ? W : H, short = horiz ? H : W;
+            const REF = { a: 0.5, b: 0.23, k: 0.383 };
             let best = null, bestScore = -Infinity;
-            anchors.forEach(([x, y], ai) => [0.45, 0.55, 0.65, 0.78, 0.92, 1.08, 1.25, 1.5, 1.8, 2.2, 2.7].forEach((k, ki) => {
-                const c = { x, y, r: k * unit };
+            [0.44, 0.47, 0.5, 0.53, 0.56].forEach(a => [0.1, 0.17, 0.23, 0.3, 0.4, 0.5, 0.6, 0.7, 0.77, 0.83].forEach(b => [0.35, 0.367, 0.383, 0.4, 0.42].forEach(k => {
+                const c = horiz ? { x: a * W, y: b * H, r: k * long } : { x: b * W, y: a * H, r: k * long };
                 let score = 0;
                 for (const t of R) {
                     const cov = t.pts.filter(p => inside(c, p)).length / t.pts.length;
-                    if (!t.zones) { score += 0.6 * value(cov); continue; }   // üres csempe: csak az ív számít
+                    if (!t.zones) { score += 0.3 * value(cov); continue; }   // üres csempe: csak az ív számít
                     const zone = Math.max(...t.zones.map(z => z.filter(p => inside(c, p)).length / z.length));
-                    // ha a szöveg alatt nincs (majdnem) csupa kék, az nagy hiba: fehér betű a világos lilán nehezen olvasható
-                    score += value(cov) + 0.9 * zone - 2.5 * Math.max(0, 0.92 - zone);
+                    // fehér szöveg a világos lilán nehezen olvasható, ezt erősen büntetjük
+                    score += 0.3 * value(cov) + 0.9 * zone - 3 * Math.max(0, 0.95 - zone);
                 }
-                score += jitter(ai * 7 + ki) * 0.05;
+                // minél közelebb a mért körhöz, annál jobb (a tükrözött, közép alatti változat is ér)
+                score -= 0.25 * Math.abs(a - REF.a) / 0.06 + 0.25 * Math.min(Math.abs(b - REF.b), Math.abs(b - (1 - REF.b))) / 0.27 + 0.25 * Math.abs(k - REF.k) / 0.05;
                 if (score > bestScore) { bestScore = score; best = c; }
-            }));
+            })));
             const circle = best;
             const dot = `<span class="uc-dot" style="left:${(circle.x - circle.r).toFixed(1)}px;top:${(circle.y - circle.r).toFixed(1)}px;width:${(2 * circle.r).toFixed(1)}px;height:${(2 * circle.r).toFixed(1)}px"></span>`;
             const inBlue = (x, y, pad = 0) => (x - circle.x) ** 2 + (y - circle.y) ** 2 <= (circle.r - pad) ** 2;
