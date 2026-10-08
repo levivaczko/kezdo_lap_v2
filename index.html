@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI oldal</title>
+<style>
+    @font-face { font-family: 'Koerber'; src: url('Koerber-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+    @font-face { font-family: 'Koerber'; src: url('Koerber-Semibold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+
+    :root {
+        --blue: #005AFA;
+        --orange: #fd8723;
+        --yellow: #FFD100;
+        --red: #E3000F;
+        --text: #333;
+        --muted: #666;
+        --line: #c8c6c4;
+        --soft: #f3f2f1;
+        --soft-2: #e1dfdd;
+        --ease: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Koerber', 'Segoe UI', sans-serif; background-color: #ffffff; color: var(--text); overflow-x: hidden; }
+    .container { max-width: 1250px; margin: 0 auto; padding: 20px; }
+    .section { margin-bottom: 64px; }
+
+    @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: none; } }
+    .animate-in { opacity: 0; animation: fadeInUp 0.8s var(--ease) forwards; }
+    .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
+    @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+
+    /* ================= Szekció címek ================= */
+    .section-header { border-bottom: 1px solid var(--line); margin-bottom: 24px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .section-title { font-size: 38px; font-weight: 400; color: #000; line-height: 1.15; }
+    .section-title span { color: var(--blue); }
+
+    /* ================= 1. sor: naptár (1/3) + AI Kisokos (2/3) ================= */
+    .top-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 24px; align-items: stretch; }
+    .top-row > .band { margin-bottom: 0; display: flex; flex-direction: column; }
+    .top-row > .band .band-grid { flex: 1; }
+
+    .cal-card { display: flex; flex-direction: column; background: #fff; border: 1px solid var(--soft-2); border-radius: 12px; padding: 18px 18px 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); min-width: 0; }
+    .cal-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
+    .cal-title-main { font-size: 30px; font-weight: 400; color: #000; line-height: 1.15; }
+    .cal-title-main span { color: var(--blue); }
+    .cal-count { font-size: 12px; color: var(--muted); white-space: nowrap; }
+    /* pontosan 3 esemény fér el (3 × 69 px); ha több van, görgethető */
+    .cal-body { position: relative; flex: 1; min-height: 207px; }
+    /* A lista nem nyújtja meg a sort: a magasságot a kisokos adja, a naptár görgethető */
+    .cal-list { position: absolute; inset: 0; overflow-y: auto; list-style: none; scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+    .cal-body.has-more::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 10px; background: linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.9)); pointer-events: none; }
+    .cal-list li + li { border-top: 1px solid var(--soft); }
+    .cal-item { display: flex; gap: 12px; align-items: center; padding: 8px 6px; border-radius: 8px; text-decoration: none; color: inherit; cursor: pointer; outline: none; transition: background-color 0.2s; }
+    .cal-item:hover, .cal-item:focus-visible, .cal-item.is-active { background-color: var(--soft); }
+    .cal-item:focus-visible { box-shadow: inset 0 0 0 2px var(--blue); }
+    .cal-date { flex-shrink: 0; width: 48px; height: 52px; border-radius: 8px; background: var(--blue); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+    .cal-item.is-today .cal-date { background: var(--orange); }
+    .cal-mon { font-size: 10px; font-weight: 600; letter-spacing: 1px; opacity: 0.85; }
+    .cal-day { font-size: 21px; font-weight: 600; margin-top: 4px; }
+    .cal-info { min-width: 0; flex: 1; }
+    .cal-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 14px; font-weight: 600; line-height: 1.3; }
+    .cal-item:hover .cal-title, .cal-item.is-active .cal-title { color: var(--blue); }
+
+    /* Esemény részletei — hoverre (érintőképernyőn koppintásra) nyíló kártya */
+    .cal-pop { position: absolute; left: 0; top: 0; z-index: 500; width: 360px; max-width: calc(100vw - 32px); background: #fff; border-radius: 12px; padding: 18px 20px 20px; box-shadow: 0 18px 44px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.06); visibility: hidden; opacity: 0; transform: translateY(6px); transition: opacity 0.18s ease, transform 0.25s var(--ease), visibility 0s linear 0.25s; }
+    .cal-pop.is-open { visibility: visible; opacity: 1; transform: none; transition: opacity 0.18s ease, transform 0.25s var(--ease), visibility 0s; }
+    .cal-pop-head { display: flex; gap: 14px; align-items: center; }
+    .cal-pop .cal-date { width: 64px; height: 70px; border-radius: 10px; }
+    .cal-pop-head.is-today .cal-date { background: var(--orange); }
+    .cal-pop .cal-mon { font-size: 12px; }
+    .cal-pop .cal-day { font-size: 30px; margin-top: 5px; }
+    .cal-pop-title { font-size: 19px; font-weight: 600; line-height: 1.25; color: #1b1a19; }
+    .cal-pop-meta { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.45; }
+    .cal-pop-desc { font-size: 14px; line-height: 1.55; color: #444; white-space: pre-line; overflow-wrap: break-word; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--soft-2); max-height: 240px; overflow-y: auto; }
+    .cal-pop-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; background: var(--blue); color: #fff; text-decoration: none; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 999px; transition: background-color 0.2s; }
+    .cal-pop-link:hover { background: #0048c8; }
+    .cal-pop-link svg { width: 14px; height: 14px; }
+    .cal-hint { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); margin-left: 6px; vertical-align: 2px; opacity: 0.55; }
+    .cal-meta { display: block; font-size: 12px; color: var(--muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .cal-badge { display: inline-block; font-size: 10px; font-weight: 600; letter-spacing: 0.5px; color: #fff; background: var(--orange); border-radius: 4px; padding: 2px 6px 1px; margin-right: 6px; vertical-align: 1px; }
+    .cal-empty { color: var(--muted); font-size: 14px; padding: 10px 2px; }
+
+    /* ================= Színes sávok (kisokos / promptok / kék sáv) ================= */
+    .band { position: relative; border-radius: 12px; padding: 18px 20px 20px; container-type: inline-size; }
+    .band-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; }
+    .band-title { font-size: 30px; font-weight: 400; color: #fff; line-height: 1.15; }
+    .band-title span { color: var(--yellow); }
+    .band--kisokos .band-title span { color: #1b1a19; }
+    .band--prompt .band-title { color: #1b1a19; }
+    .band--prompt .band-title span { color: var(--blue); }
+    .band-foot { display: flex; justify-content: flex-end; margin-top: 18px; }
+    .band-grid { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+    @container (min-width: 460px) { .band-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @container (min-width: 720px) { .band-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+    /* a prompt kártyáknak több hely kell (cím + Másolás gomb egy sorban), ezért 4 oszlop csak széles sávban */
+    @container (min-width: 720px) and (max-width: 979px) { #prompt-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+    .ink { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+    .ink path { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+    .band--kisokos { background: var(--orange); box-shadow: 0 4px 16px rgba(253, 135, 35, 0.22); --accent: #fd8723; --hl: rgba(253, 135, 35, 0.25); }
+    .band--kisokos .ink path { stroke: var(--yellow); }
+    .band--prompt { background: var(--yellow); box-shadow: 0 4px 16px rgba(255, 209, 0, 0.25); }
+    .band--prompt .ink path { stroke: var(--orange); }
+    .band--blue { background: var(--blue); box-shadow: 0 4px 16px rgba(0, 90, 250, 0.22); padding: 24px 24px 24px; --accent: var(--blue); --hl: rgba(0, 90, 250, 0.14); }
+    .band--blue .ink path { stroke: var(--yellow); }
+
+    /* ----- Fehér csempe (kisokos + kék sáv) ----- */
+    .tile { position: relative; display: block; container-type: inline-size; background: #fff; border-radius: 8px; text-decoration: none; color: var(--text); box-shadow: 0 2px 6px rgba(0,0,0,0.10); transition: transform 0.5s var(--ease), box-shadow 0.5s var(--ease); }
+    a.tile:hover { transform: translateY(-4px) rotate(-0.35deg); box-shadow: 0 12px 24px rgba(0,0,0,0.22); }
+    .tile:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+    .tile-inner { display: flex; align-items: center; gap: 14px; padding: 14px 16px; height: 100%; }
+    .tile-thumb { flex-shrink: 0; width: 60px; height: 60px; border-radius: 8px; overflow: hidden; background: var(--soft); display: flex; align-items: center; justify-content: center; }
+    .tile-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s var(--ease); }
+    /* Keskeny csempénél (pl. a 2/3-os kisokosban 4 egymás mellett) a kép a szöveg fölé kerül */
+    @container (max-width: 250px) {
+        .tile-inner { flex-direction: column; align-items: flex-start; justify-content: flex-start; gap: 10px; padding: 14px; }
+        .tile-thumb { width: 48px; height: 48px; }
+    }
+    a.tile:hover .tile-thumb img { transform: scale(1.06); }
+    .tile-mono { font-size: 22px; font-weight: 600; color: var(--accent, var(--blue)); }
+    .tile-text { display: block; flex: 1 1 auto; min-width: 0; width: 100%; }
+    .tile-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: break-word; font-size: 15px; font-weight: 600; line-height: 1.3; transition: color 0.2s; }
+    a.tile:hover .tile-title { color: var(--accent, var(--blue)); }
+    .tile-hl { background-image: linear-gradient(var(--hl), var(--hl)); background-repeat: no-repeat; background-size: 0% 100%; border-radius: 2px 7px 3px 8px; padding: 1px 3px; -webkit-box-decoration-break: clone; box-decoration-break: clone; transition: background-size 0.45s cubic-bezier(0.65, 0, 0.35, 1); }
+    a.tile:hover .tile-hl { background-size: 100% 100%; }
+    .tile-sub { display: block; font-size: 13px; color: var(--muted); line-height: 1.35; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tile-new { position: absolute; top: 12px; right: 12px; width: 8px; height: 8px; border-radius: 50%; background: var(--red); }
+    .tile.has-alert .tile-new { right: 36px; }
+    .tile-alert { position: absolute; top: 6px; right: 8px; width: 22px; height: 27px; pointer-events: none; transform: rotate(6deg); transition: transform 0.3s var(--ease); }
+    .tile-alert path { fill: none; stroke: var(--red); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+    a.tile:hover .tile-alert { transform: rotate(6deg) scale(1.12); }
+
+    .skel { background: var(--soft); background-image: linear-gradient(90deg, var(--soft) 0px, var(--soft-2) 50%, var(--soft) 100%); background-size: 1000px 100%; animation: shimmer 2s infinite linear forwards; border-radius: 4px; }
+    .tile.is-skeleton { pointer-events: none; }
+    .tile.is-skeleton .tile-title { height: 34px; width: 80%; }
+    .tile.is-skeleton .tile-sub { height: 12px; width: 90%; margin-top: 7px; }
+
+    /* ----- Prompt kártya ----- */
+    .band-more { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; background: #1b1a19; color: #fff; text-decoration: none; font-size: 13px; font-weight: 600; padding: 8px 14px; border-radius: 999px; transition: transform 0.3s var(--ease), background-color 0.2s; }
+    .band-more svg { width: 14px; height: 14px; }
+    .band-more:hover { transform: translateX(3px); background: #000; }
+    /* hoverkor a "top"-ot mozgatjuk, nem transformot: így a szöveg végig éles marad */
+    .prompt-card { position: relative; top: 0; display: flex; flex-direction: column; min-height: 230px; background: #fff; border-radius: 8px; padding: 16px 18px 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.10); min-width: 0; transition: top 0.5s var(--ease), box-shadow 0.5s var(--ease); }
+    .prompt-card:hover { top: -4px; box-shadow: 0 12px 24px rgba(0,0,0,0.18); }
+    .prompt-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+    .prompt-title { font-size: 15px; font-weight: 600; line-height: 1.3; min-width: 0; overflow-wrap: break-word; }
+    .prompt-copy { flex-shrink: 0; display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: #fff; color: var(--text); border-radius: 999px; padding: 5px 11px 5px 9px; font-family: inherit; font-size: 12px; font-weight: 600; line-height: 1; cursor: pointer; transition: background-color 0.2s, border-color 0.2s, color 0.2s; }
+    .prompt-copy svg { width: 14px; height: 14px; }
+    .prompt-copy:hover { border-color: var(--orange); color: #b35b10; }
+    .prompt-copy:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+    .prompt-copy.is-done { background: #1f8f4e; border-color: #1f8f4e; color: #fff; }
+    .prompt-copy.is-fail { background: #fff4f4; border-color: var(--red); color: var(--red); }
+    .prompt-text { font-size: 14px; line-height: 1.55; color: #555; white-space: normal; overflow-wrap: break-word; display: -webkit-box; -webkit-line-clamp: 7; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
+    .prompt-card.is-open .prompt-text { display: block; -webkit-line-clamp: unset; cursor: text; white-space: pre-line; }
+    .prompt-text .ph { background: rgba(255, 209, 0, 0.45); color: inherit; border-radius: 3px; padding: 0 2px; }
+    .prompt-card.is-skeleton { pointer-events: none; }
+    .prompt-card.is-skeleton .prompt-title { height: 16px; width: 60%; }
+    .prompt-card.is-skeleton .prompt-text { height: 120px; margin-top: 10px; }
+
+
+
+    /* ================= Étlap + AI eszközök (HTML-ből, nem SharePointból) ================= */
+    .promo-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: end; }
+    .promo-title { font-size: 28px; font-weight: 400; color: #000; margin-bottom: 16px; line-height: 1.2; }
+    .promo-title span { color: var(--blue); }
+    .promo-item:nth-child(2) .promo-title { text-align: right; }
+    .promo-card { position: relative; display: block; aspect-ratio: 3 / 2; border-radius: 8px; overflow: hidden; background: linear-gradient(135deg, #0a3fb8 0%, var(--blue) 100%); box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-decoration: none; transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease); }
+    .promo-card:hover { transform: translateY(-6px); box-shadow: 0 14px 28px rgba(0,0,0,0.15); }
+    .promo-card img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.8s var(--ease); }
+    .promo-card:hover img { transform: scale(1.04); }
+    .promo-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 32px; color: #fff; font-size: 26px; text-align: center; line-height: 1.25; }
+    .promo-btn { position: absolute; z-index: 2; left: 24px; bottom: 24px; background: #fff; color: var(--blue); font-size: 14px; font-weight: 600; padding: 7px 12px; border-radius: 3px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); transition: transform 0.3s var(--ease); }
+    .promo-card:hover .promo-btn { transform: translateX(3px); }
+
+    /* ================= Sikertörténetek (L / M / S) =================
+       A régi képes csempék stílusa: nagy Körber-kék kör lila háttéren, fehér szöveg.
+       A körök az egész rácsra közösek, így az ívek a hézagokon át folytatódnak. */
+    /* Négyes blokkok, felváltva: A = nagy | kicsi kicsi / hosszú,  B = hosszú / kicsi kicsi | nagy.
+       Minden blokkban egy kör. */
+    .uc-grid { display: flex; flex-direction: column; gap: 12px; --uc-blue: #0060ff; }
+    .uc-block { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 180px; gap: 12px; }
+    .uc-block.is-A .slot-L  { grid-area: 1 / 1 / 3 / 3; }
+    .uc-block.is-A .slot-S1 { grid-area: 1 / 3 / 2 / 4; }
+    .uc-block.is-A .slot-S2 { grid-area: 1 / 4 / 2 / 5; }
+    .uc-block.is-A .slot-M  { grid-area: 2 / 3 / 3 / 5; }
+    .uc-block.is-B .slot-M  { grid-area: 1 / 1 / 2 / 3; }
+    .uc-block.is-B .slot-S1 { grid-area: 2 / 1 / 3 / 2; }
+    .uc-block.is-B .slot-S2 { grid-area: 2 / 2 / 3 / 3; }
+    .uc-block.is-B .slot-L  { grid-area: 1 / 3 / 3 / 5; }
+    .uc-tile { position: relative; overflow: hidden; border-radius: 8px; background: #a86bfb; color: #fff; text-decoration: none; isolation: isolate; transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease); }
+    a.uc-tile:hover { transform: translateY(-6px); box-shadow: 0 14px 28px rgba(0, 40, 140, 0.22); z-index: 2; }
+    a.uc-tile:focus-visible { outline: 3px solid var(--yellow); outline-offset: 3px; }
+    .uc-art { position: absolute; left: 0; top: 0; pointer-events: none; z-index: -1;
+              background: radial-gradient(60% 70% at 85% 30%, rgba(214, 160, 255, 0.85), rgba(214, 160, 255, 0) 70%),
+                          radial-gradient(50% 60% at 15% 85%, rgba(200, 140, 255, 0.6), rgba(200, 140, 255, 0) 70%),
+                          linear-gradient(135deg, #a86bfb 0%, #c183fc 50%, #a970f6 100%); }
+    .uc-dot { position: absolute; border-radius: 50%; background: var(--uc-blue); }
+    .uc-text { position: absolute; z-index: 1; left: 22px; top: 20px; max-width: calc(100% - 44px); text-shadow: 0 1px 2px rgba(0, 30, 120, 0.18); }
+    .uc-text.at-bl { top: auto; bottom: 20px; }
+    .uc-text.at-tr { left: auto; right: 22px; text-align: right; }
+    .uc-text.at-br { top: auto; bottom: 20px; left: auto; right: 22px; text-align: right; }
+    .uc-L .uc-text { max-width: min(62%, 420px); left: 32px; top: 30px; }
+    .uc-L .uc-text.at-bl, .uc-L .uc-text.at-br { top: auto; bottom: 30px; }
+    .uc-L .uc-text.at-tr, .uc-L .uc-text.at-br { left: auto; right: 32px; }
+    .uc-title { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; font-weight: 400; line-height: 1.15; overflow-wrap: break-word; }
+    .uc-L .uc-title { font-size: 36px; -webkit-line-clamp: 4; }
+    .uc-M .uc-title { font-size: 25px; -webkit-line-clamp: 2; }
+    .uc-S .uc-title { font-size: 20px; }
+    .uc-title .nw { white-space: nowrap; }
+    .uc-sub { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: 8px; font-size: 14px; line-height: 1.35; color: rgba(255, 255, 255, 0.9); }
+    .uc-S .uc-sub { font-size: 13px; }
+    .uc-L .uc-sub { font-size: 16px; margin-top: 12px; }
+    .uc-icon { position: absolute; z-index: 1; border-radius: 50%; background: #fff; box-shadow: 0 6px 18px rgba(40, 0, 120, 0.18); display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%); transition: transform 0.6s var(--ease); }
+    .uc-icon[hidden] { display: none; }
+    .uc-icon img { width: 58%; height: 58%; object-fit: contain; }
+    a.uc-tile:hover .uc-icon { transform: translate(-50%, -50%) scale(1.06); }
+
+    /* ================= SharePointos részek helye ================= */
+    .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
+    .video-placeholder { background: transparent; width: 100%; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; border-radius: 8px; position: relative; }
+
+    /* ================= Reszponzív ================= */
+    @media (max-width: 1000px) {
+        .top-row { grid-template-columns: minmax(0, 1fr); }
+        .top-row > .band { order: -1; }          /* mobilon a kisokos van elöl */
+        .cal-body { min-height: 0; }
+        .cal-list { position: static; max-height: 207px; }
+    }
+    @media (max-width: 900px) {
+        .uc-block { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .uc-block.is-A .slot-L  { grid-area: 1 / 1 / 3 / 3; }
+        .uc-block.is-A .slot-S1 { grid-area: 3 / 1 / 4 / 2; }
+        .uc-block.is-A .slot-S2 { grid-area: 3 / 2 / 4 / 3; }
+        .uc-block.is-A .slot-M  { grid-area: 4 / 1 / 5 / 3; }
+        .uc-block.is-B .slot-M  { grid-area: 1 / 1 / 2 / 3; }
+        .uc-block.is-B .slot-S1 { grid-area: 2 / 1 / 3 / 2; }
+        .uc-block.is-B .slot-S2 { grid-area: 2 / 2 / 3 / 3; }
+        .uc-block.is-B .slot-L  { grid-area: 3 / 1 / 5 / 3; }
+    }
+    @media (max-width: 760px) {
+        .section { margin-bottom: 48px; }
+        .section-title { font-size: 30px; }
+        .promo-grid, .video-grid { grid-template-columns: minmax(0, 1fr); }
+        .promo-item:nth-child(2) .promo-title { text-align: left; }
+        .promo-title { font-size: 24px; }
+        .band-title { font-size: 26px; }
+    }
+    @media (max-width: 520px) {
+        .container { padding: 16px; }
+        .section-title { font-size: 26px; }
+        .uc-block { grid-template-columns: minmax(0, 1fr); grid-auto-rows: 160px; }
+        .uc-block.is-A .slot-L  { grid-area: 1 / 1 / 3 / 2; }
+        .uc-block.is-A .slot-S1 { grid-area: 3 / 1 / 4 / 2; }
+        .uc-block.is-A .slot-S2 { grid-area: 4 / 1 / 5 / 2; }
+        .uc-block.is-A .slot-M  { grid-area: 5 / 1 / 6 / 2; }
+        .uc-block.is-B .slot-M  { grid-area: 1 / 1 / 2 / 2; }
+        .uc-block.is-B .slot-S1 { grid-area: 2 / 1 / 3 / 2; }
+        .uc-block.is-B .slot-S2 { grid-area: 3 / 1 / 4 / 2; }
+        .uc-block.is-B .slot-L  { grid-area: 4 / 1 / 6 / 2; }
+        .uc-L .uc-title { font-size: 28px; }
+        .uc-L .uc-text { max-width: calc(100% - 64px); }
+
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .animate-in { animation: none; opacity: 1; }
+        a.tile:hover, a.uc-tile:hover, .promo-card:hover { transform: translateY(-4px); }
+        .tile-hl { transition: none; }
+    }
+</style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- 1. sor: Események (1/3) + AI Kisokos (2/3) -->
+        <div class="section top-row animate-in delay-1">
+            <section class="cal-card" aria-labelledby="cal-label">
+                <div class="cal-head">
+                    <h2 class="cal-title-main" id="cal-label">Közelgő <span>események</span></h2>
+                    <span class="cal-count" id="cal-count"></span>
+                </div>
+                <div class="cal-body" id="cal-body"><ol class="cal-list" id="cal-list"></ol></div>
+            </section>
+
+            <section class="band band--kisokos" id="kisokos-band">
+                <div class="band-head"><h2 class="band-title">AI <span>Kisokos</span></h2></div>
+                <div class="band-grid" id="kisokos-grid"></div>
+            </section>
+        </div>
+
+        <!-- 2. Top promptok -->
+        <section class="section band band--prompt animate-in delay-2" id="prompt-band">
+            <div class="band-head"><h2 class="band-title">Top <span>promptok</span></h2></div>
+            <div class="band-grid" id="prompt-grid"></div>
+            <div class="band-foot">
+                <a class="band-more" id="prompt-more" href="#" target="_blank" rel="noopener noreferrer">
+                    <span>Tovább a promptokhoz</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </a>
+            </div>
+        </section>
+
+        <!-- 3. Hasznos linkek (kék sáv) -->
+        <section class="section band band--blue animate-in delay-2" id="blue-band">
+            <div class="band-head"><h2 class="band-title">Hasznos <span>linkek</span></h2></div>
+            <div class="band-grid" id="blue-grid"></div>
+        </section>
+
+
+        <div class="section animate-in delay-4" id="promo-section">
+            <div class="promo-grid" id="promo-grid"></div>
+        </div>
+
+        <!-- 5. Sikertörténetek (L / M / S) — ezek váltják ki a régi képes útmutató-csempéket -->
+        <section class="section animate-in delay-4" id="uc-section">
+            <div class="section-header"><h2 class="section-title">AI <span>sikertörténetek</span></h2></div>
+            <div class="uc-grid" id="uc-grid"></div>
+        </section>
+
+        <!-- 6. SharePoint web part helye (a videók fölé kerülnek a SharePointos elemek) -->
+
+        <div class="section animate-in delay-4">
+            <div class="section-header"><h2 class="section-title">Videós <span>útmutatók</span></h2></div>
+            <div class="video-grid">
+                <div class="video-placeholder"></div>
+                <div class="video-placeholder"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="cal-pop" id="cal-pop" role="dialog" aria-live="polite"></div>
+
+    <script>
+        /* =====================================================================
+           BEÁLLÍTÁSOK — ezeket nyugodtan átírhatod
+           ===================================================================== */
+        const PROMPTOK_OLDAL = 'https://koerbergroup.sharepoint.com/sites/AI';  // ← a "Tovább a promptokhoz" gomb célja
+        const NEW_DAYS = 30;          // ennyi napig "ÚJ" egy elem (a manager.py-ban is ugyanennyi legyen)
+        const MAX_KISOKOS = 4;        // ennyi csempe látszik a sávokban
+        const MAX_PROMPTS = 4;
+        const MAX_BLUE = 4;
+        const MAX_PROMO = 2;
+        const BOIL_MS = 125;          // a kisokos remegő keretének tempója
+        const BOIL_FRAMES = 8;
+        const PROMO_GOMB = 'További információ';
+
+        window.history.scrollRestoration = 'manual';
+        window.scrollTo(0, 0);
+
+        let siteData = null;
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* ---------- segédek ---------- */
+        const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        function fixLink(link) {
+            link = (link || '#').trim();
+            if (link !== '#' && !/^(https?:|mailto:|\/)/i.test(link)) link = 'https://' + link;
+            return link;
+        }
+        const linkAttrs = link => link === '#' ? '' : ' target="_blank" rel="noopener noreferrer"';
+        function accentLast(title) {
+            const t = esc(title).trim();
+            const i = t.lastIndexOf(' ');
+            return i < 0 ? `<span>${t}</span>` : `${t.slice(0, i)} <span>${t.slice(i + 1)}</span>`;
+        }
+        function hashStr(s) { let h = 2166136261; for (const ch of String(s)) { h ^= ch.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+
+        function isCardNew(card) {
+            if (!card) return false;
+            if (!card.date) return card.isNew === true;
+            const d = new Date(card.date + 'T00:00:00');
+            if (isNaN(d.getTime())) return false;
+            return (Date.now() - d.getTime()) <= NEW_DAYS * 86400000;
+        }
+
+        /* =====================================================================
+           Rajzolt keret (kisokos: remeg, promptok + kék sáv: áll)
+           ===================================================================== */
+        const Ink = (() => {
+            const boilers = new Set();
+            function rng(seed) {
+                return function () {
+                    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+                    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+                    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+                    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+                };
+            }
+            function smooth(pts) {
+                const n = pts.length;
+                let d = 'M' + pts[0][0].toFixed(1) + ',' + pts[0][1].toFixed(1);
+                for (let i = 0; i < n; i++) {
+                    const p0 = pts[(i - 1 + n) % n], p1 = pts[i], p2 = pts[(i + 1) % n], p3 = pts[(i + 2) % n];
+                    d += 'C' + (p1[0] + (p2[0] - p0[0]) / 6).toFixed(1) + ',' + (p1[1] + (p2[1] - p0[1]) / 6).toFixed(1)
+                       + ' ' + (p2[0] - (p3[0] - p1[0]) / 6).toFixed(1) + ',' + (p2[1] - (p3[1] - p1[1]) / 6).toFixed(1)
+                       + ' ' + p2[0].toFixed(1) + ',' + p2[1].toFixed(1);
+                }
+                return d;
+            }
+            function roughRect(w, h, r, seed, amp, out) {
+                const rand = rng(seed), pts = [];
+                const x0 = 1.5 - out, y0 = 1.5 - out, x1 = w - 1.5 + out, y1 = h - 1.5 + out;
+                const push = (x, y) => pts.push([x + (rand() * 2 - 1) * amp, y + (rand() * 2 - 1) * amp]);
+                const arc = (cx, cy, from, to) => { for (let i = 0; i <= 3; i++) { const a = from + (to - from) * (i / 3); push(cx + Math.cos(a) * r, cy + Math.sin(a) * r); } };
+                const segs = Math.max(3, Math.round((x1 - x0) / 90));
+                const vsegs = Math.max(3, Math.round((y1 - y0) / 90));
+                for (let i = 0; i <= segs; i++) push(x0 + r + (x1 - x0 - 2 * r) * (i / segs), y0);
+                arc(x1 - r, y0 + r, -Math.PI / 2, 0);
+                for (let i = 1; i <= vsegs; i++) push(x1, y0 + r + (y1 - y0 - 2 * r) * (i / vsegs));
+                arc(x1 - r, y1 - r, 0, Math.PI / 2);
+                for (let i = 1; i <= segs; i++) push(x1 - r - (x1 - x0 - 2 * r) * (i / segs), y1);
+                arc(x0 + r, y1 - r, Math.PI / 2, Math.PI);
+                for (let i = 1; i <= vsegs; i++) push(x0, y1 - r - (y1 - y0 - 2 * r) * (i / vsegs));
+                arc(x0 + r, y0 + r, Math.PI, Math.PI * 1.5);
+                return smooth(pts);
+            }
+            function attach(band, opts) {
+                const o = Object.assign({ animate: false, out: 4, amp: 2.4, radius: 12, seed: 11 }, opts);
+                let svg = band.querySelector(':scope > .ink');
+                if (!svg) {
+                    svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.setAttribute('class', 'ink');
+                    svg.setAttribute('preserveAspectRatio', 'none');
+                    svg.setAttribute('aria-hidden', 'true');
+                    band.prepend(svg);
+                }
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                svg.replaceChildren(path);
+                let frames = [], idx = 0, timer = null, raf = 0, lastW = 0, lastH = 0;
+
+                function build() {
+                    const w = band.offsetWidth, h = band.offsetHeight;
+                    if (!w || !h || (w === lastW && h === lastH)) return;
+                    lastW = w; lastH = h;
+                    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+                    const n = o.animate && !reducedMotion ? BOIL_FRAMES : 1;
+                    frames = [];
+                    for (let f = 0; f < n; f++) frames.push(roughRect(w, h, o.radius + o.out, o.seed + f * 37, o.amp, o.out));
+                    idx = 0;
+                    path.setAttribute('d', frames[0]);
+                }
+                function start() {
+                    if (timer || frames.length < 2) return;
+                    timer = setInterval(() => {
+                        let next = idx;
+                        while (next === idx) next = Math.floor(Math.random() * frames.length);
+                        idx = next;
+                        path.setAttribute('d', frames[idx]);
+                    }, BOIL_MS);
+                }
+                function stop() { clearInterval(timer); timer = null; }
+
+                build();
+                if (o.animate) { start(); boilers.add({ start, stop }); }
+                new ResizeObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => { build(); if (o.animate && !document.hidden) start(); }); }).observe(band);
+            }
+            document.addEventListener('visibilitychange', () => boilers.forEach(b => document.hidden ? b.stop() : b.start()));
+            return { attach };
+        })();
+
+        Ink.attach(document.getElementById('kisokos-band'), { animate: true, seed: 11 });
+        Ink.attach(document.getElementById('prompt-band'), { animate: false, seed: 57, amp: 2.2 });
+        Ink.attach(document.getElementById('blue-band'), { animate: false, seed: 91, amp: 2.2 });
+
+        /* =====================================================================
+           Csempék (AI Kisokos + kék sáv)
+           ===================================================================== */
+        const ALERT_SVG = '<svg class="tile-alert" viewBox="0 0 17 21" aria-hidden="true">'
+            + '<path d="M9.3 2.6 C 8.7 5.9, 8.3 9.4, 8.0 12.7"/>'
+            + '<path d="M7.7 17.9 C 7.9 17.8, 8.1 17.9, 8.0 18.1"/></svg>';
+
+        function tileSkeletons(n) {
+            return Array.from({ length: n }, () =>
+                '<div class="tile is-skeleton"><div class="tile-inner"><span class="tile-thumb skel"></span>'
+                + '<span class="tile-text"><span class="tile-title skel"></span><span class="tile-sub skel"></span></span></div></div>').join('');
+        }
+        function promptSkeletons(n) {
+            return Array.from({ length: n }, () =>
+                '<div class="prompt-card is-skeleton"><span class="prompt-title skel"></span><span class="prompt-text skel"></span></div>').join('');
+        }
+        document.getElementById('kisokos-grid').innerHTML = tileSkeletons(MAX_KISOKOS);
+        document.getElementById('blue-grid').innerHTML = tileSkeletons(MAX_BLUE);
+        document.getElementById('prompt-grid').innerHTML = promptSkeletons(MAX_PROMPTS);
+
+        // Ha nincs kép (vagy nem töltődik be), a cím első betűje jelenik meg helyette
+        function thumbHtml(item) {
+            const letter = esc((item.title || '?').trim().charAt(0).toUpperCase());
+            const mono = `<span class="tile-mono">${letter}</span>`;
+            if (!item.img) return mono;
+            return `<img src="${esc(item.img)}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'tile-mono',textContent:'${letter}'}))">`;
+        }
+
+        function renderTiles(gridId, items, max, opts = {}) {
+            const grid = document.getElementById(gridId);
+            const band = grid.closest('.band');
+            const list = (items || []).slice(0, max);
+            if (!list.length) { band.style.display = 'none'; return false; }
+            grid.innerHTML = list.map(item => {
+                const link = fixLink(item.link);
+                const alert = opts.marks && item.mark;
+                return `<a class="tile${alert ? ' has-alert' : ''}" href="${esc(link)}"${linkAttrs(link)}>
+                    <span class="tile-inner">
+                        <span class="tile-thumb">${thumbHtml(item)}</span>
+                        <span class="tile-text">
+                            <span class="tile-title" title="${esc(item.title)}"><span class="tile-hl">${esc(item.title)}</span></span>
+                            ${item.sub ? `<span class="tile-sub">${esc(item.sub)}</span>` : ''}
+                        </span>
+                    </span>
+                    ${isCardNew(item) ? '<span class="tile-new" aria-label="Új"></span>' : ''}
+                    ${alert ? ALERT_SVG : ''}
+                </a>`;
+            }).join('');
+            return true;
+        }
+
+        /* =====================================================================
+           Promptok — másolás gombbal
+           ===================================================================== */
+        const ICON_COPY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+        const ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>';
+        let promptList = [];
+
+        // A [szögletes zárójeles] részeket kiemeljük: ezeket kell a felhasználónak kitöltenie
+        const promptHtml = text => esc(text).replace(/\[([^\]\n]{1,80})\]/g, '<mark class="ph">[$1]</mark>');
+
+        function renderPrompts(items) {
+            const grid = document.getElementById('prompt-grid');
+            const band = document.getElementById('prompt-band');
+            document.getElementById('prompt-more').href = PROMPTOK_OLDAL;
+            promptList = (items || []).filter(p => p && p.text).slice(0, MAX_PROMPTS);
+            if (!promptList.length) { band.style.display = 'none'; return; }
+            grid.innerHTML = promptList.map((p, i) => `
+                <article class="prompt-card" data-i="${i}">
+                    <div class="prompt-top">
+                        <h3 class="prompt-title">${esc(p.title || 'Prompt')}</h3>
+                        <button type="button" class="prompt-copy" data-i="${i}" aria-label="${esc(p.title || 'Prompt')} másolása">${ICON_COPY}<span>Másolás</span></button>
+                    </div>
+                    <p class="prompt-text" title="Kattints a teljes szövegért">${promptHtml(p.text)}</p>
+                </article>`).join('');
+        }
+
+        async function copyText(text) {
+            try {
+                if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); return true; }
+            } catch (e) { /* iframe-ben tiltott lehet — jön a tartalék megoldás */ }
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly', '');
+            ta.style.cssText = 'position:fixed;top:-1000px;left:0;opacity:0;';
+            document.body.appendChild(ta);
+            ta.select();
+            let ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+            ta.remove();
+            return ok;
+        }
+
+        document.getElementById('prompt-grid').addEventListener('click', async (e) => {
+            const btn = e.target.closest('.prompt-copy');
+            const card = e.target.closest('.prompt-card');
+            if (!card) return;
+            if (!btn) {                                   // a szövegre kattintva kinyílik a teljes prompt
+                if (e.target.closest('.prompt-text') && !window.getSelection().toString()) card.classList.toggle('is-open');
+                return;
+            }
+            const p = promptList[+btn.dataset.i];
+            if (!p) return;
+            const ok = await copyText(p.text);
+            clearTimeout(btn._t);
+            if (ok) {
+                btn.classList.remove('is-fail'); btn.classList.add('is-done');
+                btn.innerHTML = ICON_CHECK + '<span>Másolva</span>';
+            } else {
+                // Végső tartalék: kinyitjuk és kijelöljük a szöveget, a felhasználó Ctrl+C-vel másolja
+                card.classList.add('is-open');
+                const range = document.createRange();
+                range.selectNodeContents(card.querySelector('.prompt-text'));
+                const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+                btn.classList.add('is-fail');
+                btn.innerHTML = '<span>Ctrl+C</span>';
+            }
+            btn._t = setTimeout(() => {
+                btn.classList.remove('is-done', 'is-fail');
+                btn.innerHTML = ICON_COPY + '<span>Másolás</span>';
+            }, 1800);
+        });
+
+        /* =====================================================================
+           Naptár (az Excelből a manager tölti be a data.json "esemenyek" listájába)
+           ===================================================================== */
+        const HU_MON = ['JAN', 'FEB', 'MÁR', 'ÁPR', 'MÁJ', 'JÚN', 'JÚL', 'AUG', 'SZEP', 'OKT', 'NOV', 'DEC'];
+        const HU_DAY = ['vasárnap', 'hétfő', 'kedd', 'szerda', 'csütörtök', 'péntek', 'szombat'];
+        function parseDay(s) {
+            const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || '');
+            return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null;
+        }
+        let calEvents = [];
+        function renderCalendar(events) {
+            const list = document.getElementById('cal-list');
+            const body = document.getElementById('cal-body');
+            const today = new Date(); today.setHours(0, 0, 0, 0);
+            const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
+
+            calEvents = (events || [])
+                .map(e => Object.assign({}, e, { d: parseDay(e.date) }))
+                .filter(e => e.d && e.d >= today)
+                .sort((a, b) => (a.d - b.d) || String(a.start || '').localeCompare(String(b.start || '')));
+            calEvents.forEach(e => {
+                e.isToday = +e.d === +today;
+                e.dayWord = e.isToday ? 'ma' : +e.d === +tomorrow ? 'holnap' : HU_DAY[e.d.getDay()];
+                e.time = e.start ? (e.end ? `${e.start}–${e.end}` : e.start) : 'egész nap';
+            });
+
+            document.getElementById('cal-count').textContent = calEvents.length ? `${calEvents.length} db` : '';
+            if (!calEvents.length) {
+                list.innerHTML = '<li class="cal-empty">Nincs közelgő esemény.</li>';
+                return;
+            }
+            list.innerHTML = calEvents.map((e, i) => {
+                const meta = [e.isToday ? '' : e.dayWord, e.time, e.location].filter(Boolean).map(esc).join(' · ');
+                const more = e.desc || e.link ? '<span class="cal-hint" title="Részletek"></span>' : '';
+                return `<li><div class="cal-item${e.isToday ? ' is-today' : ''}" tabindex="0" role="button" data-i="${i}" aria-label="${esc(e.title)} — részletek">
+                    <span class="cal-date"><span class="cal-mon">${HU_MON[e.d.getMonth()]}</span><span class="cal-day">${e.d.getDate()}</span></span>
+                    <span class="cal-info">
+                        <span class="cal-title">${esc(e.title)}${more}</span>
+                        <span class="cal-meta">${e.isToday ? '<span class="cal-badge">MA</span>' : ''}${meta}</span>
+                    </span>
+                </div></li>`;
+            }).join('');
+            const checkMore = () => body.classList.toggle('has-more', list.scrollHeight - list.scrollTop - list.clientHeight > 4);
+            list.addEventListener('scroll', () => { checkMore(); CalPop.hide(true); }, { passive: true });
+            new ResizeObserver(checkMore).observe(list);
+            checkMore();
+        }
+
+        /* Esemény részletei: hoverre (billentyűzettel fókuszra, érintésre koppintásra) nagyobb kártya */
+        const CalPop = (() => {
+            const pop = document.getElementById('cal-pop');
+            const list = document.getElementById('cal-list');
+            const ICON_LINK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg>';
+            let timer = 0, current = null;
+
+            function show(item) {
+                clearTimeout(timer);
+                const e = calEvents[+item.dataset.i];
+                if (!e) return;
+                if (current !== item) {
+                    if (current) current.classList.remove('is-active');
+                    current = item;
+                    item.classList.add('is-active');
+                    const link = e.link ? fixLink(e.link) : '';
+                    const isTeams = /teams\.microsoft|teams\.live/i.test(link);
+                    pop.innerHTML = `
+                        <div class="cal-pop-head${e.isToday ? ' is-today' : ''}">
+                            <span class="cal-date"><span class="cal-mon">${HU_MON[e.d.getMonth()]}</span><span class="cal-day">${e.d.getDate()}</span></span>
+                            <div>
+                                <div class="cal-pop-title">${esc(e.title)}</div>
+                                <div class="cal-pop-meta">${esc(e.d.getFullYear() + '. ' + (e.d.getMonth() + 1) + '. ' + e.d.getDate() + '., ' + e.dayWord)}<br>${esc(e.time)}${e.location ? ' · ' + esc(e.location) : ''}</div>
+                            </div>
+                        </div>
+                        ${e.desc ? `<div class="cal-pop-desc">${esc(e.desc)}</div>` : ''}
+                        ${link && link !== '#' ? `<a class="cal-pop-link" href="${esc(link)}" target="_blank" rel="noopener noreferrer">${isTeams ? 'Csatlakozás Teamsen' : 'Megnyitás'} ${ICON_LINK}</a>` : ''}`;
+                }
+                place(item);
+                pop.classList.add('is-open');
+            }
+
+            function place(item) {
+                const r = item.getBoundingClientRect();
+                const pw = pop.offsetWidth, ph = pop.offsetHeight, vw = document.documentElement.clientWidth, vh = window.innerHeight;
+                let left = r.right + 14, top = r.top - 6;
+                if (left + pw > vw - 12) {                 // jobbra nem fér el: az esemény alá
+                    left = Math.max(12, Math.min(r.left, vw - pw - 12));
+                    top = r.bottom + 8;
+                } else if (top + ph > vh - 12) {
+                    top = Math.max(12, vh - 12 - ph);
+                }
+                pop.style.left = (left + window.scrollX) + 'px';
+                pop.style.top = (top + window.scrollY) + 'px';
+            }
+
+            function hide(now) {
+                clearTimeout(timer);
+                const go = () => { pop.classList.remove('is-open'); if (current) current.classList.remove('is-active'); current = null; };
+                if (now === true) go(); else timer = setTimeout(go, 200);
+            }
+
+            const hoverable = window.matchMedia('(hover: hover)').matches;
+            list.addEventListener('mouseover', e => { const it = e.target.closest('.cal-item'); if (it && hoverable) show(it); });
+            list.addEventListener('mouseout', e => { if (!e.relatedTarget || !pop.contains(e.relatedTarget)) hide(); });
+            pop.addEventListener('mouseenter', () => clearTimeout(timer));
+            pop.addEventListener('mouseleave', () => hide());
+            list.addEventListener('focusin', e => { const it = e.target.closest('.cal-item'); if (it) show(it); });
+            list.addEventListener('focusout', e => { if (!pop.contains(e.relatedTarget)) hide(); });
+            list.addEventListener('click', e => {        // érintőképernyő: koppintásra nyit/zár
+                const it = e.target.closest('.cal-item');
+                if (!it) return;
+                if (current === it && pop.classList.contains('is-open') && !hoverable) hide(true); else show(it);
+            });
+            list.addEventListener('keydown', e => { if (e.key === 'Escape') hide(true); });
+            document.addEventListener('click', e => { if (!pop.contains(e.target) && !list.contains(e.target)) hide(true); });
+            window.addEventListener('resize', () => hide(true));
+            return { hide };
+        })();
+
+        /* =====================================================================
+           Étlap + AI eszközök (képes nagy csempék)
+           ===================================================================== */
+        function renderPromo(items) {
+            const list = (items || []).slice(0, MAX_PROMO);
+            const section = document.getElementById('promo-section');
+            if (!list.length) { section.style.display = 'none'; return; }
+            document.getElementById('promo-grid').innerHTML = list.map(p => {
+                const link = fixLink(p.link);
+                return `<div class="promo-item">
+                    <h2 class="promo-title">${accentLast(p.title)}</h2>
+                    <a class="promo-card" href="${esc(link)}"${linkAttrs(link)}>
+                        <span class="promo-fallback">${esc(p.title)}</span>
+                        ${p.img ? `<img src="${esc(p.img)}" alt="" loading="lazy" onerror="this.remove()">` : ''}
+                        <span class="promo-btn">${esc(p.button || PROMO_GOMB)}</span>
+                    </a>
+                </div>`;
+            }).join('');
+        }
+
+        /* =====================================================================
+           Sikertörténetek — L / M / S csempék, Körber-kék körökkel.
+           A körök a csempék találkozásánál ülnek, így a darabjaik a hézagokon
+           át egy-egy egész kört adnak ki. Méretváltozáskor újraszámoljuk.
+           ===================================================================== */
+        // A projekteket négyes blokkokba osztjuk (1 nagy, 2 kicsi, 1 hosszú), felváltva A és B elrendezésben.
+        // Előbb a méret szerint illő projektek kerülnek a helyekre, a maradék kitölti az üres helyeket.
+        // Az utolsó blokk is teljes: ahol nincs több projekt, ott üres csempe marad (a kör abban is látszik).
+        function buildBlocks(list) {
+            const sizeOf = u => ['L', 'M', 'S'].includes(u.size) ? u.size : 'S';
+            const queue = list.slice();
+            const blocks = [];
+            while (queue.length) {
+                const slots = [['L', 'L', null], ['S1', 'S', null], ['S2', 'S', null], ['M', 'M', null]];
+                slots.forEach(slot => {
+                    const i = queue.findIndex(u => sizeOf(u) === slot[1]);
+                    if (i >= 0) slot[2] = queue.splice(i, 1)[0];
+                });
+                const remaining = queue.length;
+                // ha még bőven van projekt, az üres helyeket a sorban következőkkel töltjük ki
+                if (remaining) slots.forEach(slot => { if (!slot[2] && queue.length) slot[2] = queue.shift(); });
+                blocks.push({ kind: blocks.length % 2 ? 'B' : 'A', slots: slots.map(([slot, , u]) => [slot, u]) });
+            }
+            return blocks;
+        }
+
+        function renderUsecases(items) {
+            const grid = document.getElementById('uc-grid');
+            const section = document.getElementById('uc-section');
+            const list = (items || []).filter(u => u && u.title);
+            if (!list.length) { section.style.display = 'none'; return; }
+            const textClass = { L: 'uc-L', S1: 'uc-S', S2: 'uc-S', M: 'uc-M' };
+            grid.innerHTML = buildBlocks(list).map(b => `<div class="uc-block is-${b.kind}">${b.slots.map(([slot, u]) => {
+                if (!u) return `<div class="uc-tile is-empty slot-${slot} ${textClass[slot]}" aria-hidden="true"><span class="uc-art"></span></div>`;
+                const link = u.link ? fixLink(u.link) : '';
+                const tag = link && link !== '#' ? 'a' : 'div';
+                const attrs = tag === 'a' ? ` href="${esc(link)}"${linkAttrs(link)}` : '';
+                const icon = u.img ? `<span class="uc-icon" hidden><img src="${esc(u.img)}" alt="" onerror="this.parentNode.remove()"></span>` : '';
+                return `<${tag} class="uc-tile slot-${slot} ${textClass[slot]}"${attrs} data-seed="${hashStr(u.title)}">
+                    <span class="uc-art" aria-hidden="true"></span>
+                    <span class="uc-text"><span class="uc-title">${esc(u.title).replace(/(\S*-\S+)/g, '<span class="nw">$1</span>')}</span>${u.sub ? `<span class="uc-sub">${esc(u.sub)}</span>` : ''}</span>
+                    ${icon}
+                </${tag}>`;
+            }).join('')}</div>`).join('');
+
+            let raf = 0, lastKey = '';
+            const relayout = () => {
+                cancelAnimationFrame(raf);
+                raf = requestAnimationFrame(() => {
+                    const key = grid.clientWidth + 'x' + grid.clientHeight;
+                    if (key === lastKey) return;
+                    lastKey = key;
+                    grid.querySelectorAll('.uc-block').forEach(layoutBlockArt);
+                });
+            };
+            new ResizeObserver(relayout).observe(grid);
+            if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { lastKey = ''; relayout(); });
+            relayout();
+        }
+
+        /* Blokkonként EGY nagy kör. A helyét és méretét úgy választjuk, hogy minden csempe
+           kb. 60%-ban kék legyen (mint a régi képeken), és a szöveg alá kék kerüljön.
+           A kör közös a blokk csempéin, így az íve a hézagokon át folytatódik. */
+        function layoutBlockArt(block) {
+            const tiles = [...block.querySelectorAll('.uc-tile')];
+            if (!tiles.length) return;
+            const W = block.clientWidth, H = block.clientHeight;
+            const R = tiles.map(el => ({ el, x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight, big: el.classList.contains('uc-L') }));
+            const seed = tiles.reduce((s, el) => (Math.imul(s, 31) + (+el.dataset.seed || 0)) >>> 0, 7);
+            const jitter = k => ((Math.imul(seed ^ Math.imul(k, 2654435761), 1597334677) >>> 0) % 1000) / 1000;
+
+            // mintapontok + a négy sarok "szövegzónája"
+            const NX = 12, NY = 8, TARGET = 0.68;
+            R.forEach(t => {
+                // a valódi szövegdoboz mérete — a négy sarok közül ide kerülhet a szöveg
+                const txt = t.el.querySelector('.uc-text');
+                t.pts = [];
+                for (let i = 0; i < NX; i++) for (let j = 0; j < NY; j++) t.pts.push([t.x + (i + 0.5) * t.w / NX, t.y + (j + 0.5) * t.h / NY]);
+                if (!txt) { t.zones = null; return; }
+                txt.className = 'uc-text';
+                const tw = txt.offsetWidth + 8, th = txt.offsetHeight + 8, lx = txt.offsetLeft - 4, ty = txt.offsetTop - 4;
+                const rects = [[lx, ty], [lx, t.h - ty - th], [t.w - lx - tw, ty], [t.w - lx - tw, t.h - ty - th]];
+                // zónánként 7×5 mintapont a szövegdoboz területén
+                t.zones = rects.map(([zx, zy]) => {
+                    const z = [];
+                    for (let a = 0; a <= 6; a++) for (let b = 0; b <= 4; b++) z.push([t.x + zx + tw * a / 6, t.y + zy + th * b / 4]);
+                    return z;
+                });
+            });
+            // csúcs ~68% kéknél; a teljesen kék csempe még elfogadható (0,35), az ív nélküli lila rosszabb
+            const value = c => c <= TARGET ? c / TARGET : 1 - 0.65 * (c - TARGET) / (1 - TARGET);
+            const inside = (c, p) => (p[0] - c.x) ** 2 + (p[1] - c.y) ** 2 <= c.r * c.r;
+
+            const anchors = [];
+            // blokk szintű pontok, a blokkon kívül is (a régi képeken a kör közepe a csempén kívül volt)
+            for (const fx of [-0.6, -0.3, 0, 0.25, 0.5, 0.75, 1, 1.3, 1.6]) for (const fy of [-0.6, -0.2, 0.25, 0.5, 0.75, 1.2, 1.6]) anchors.push([fx * W, fy * H]);
+            R.forEach(t => {
+                const o = 0.3 * Math.min(t.w, t.h);
+                anchors.push([t.x, t.y], [t.x + t.w, t.y], [t.x, t.y + t.h], [t.x + t.w, t.y + t.h],
+                    [t.x + t.w / 2, t.y], [t.x + t.w / 2, t.y + t.h], [t.x, t.y + t.h / 2], [t.x + t.w, t.y + t.h / 2],
+                    [t.x - o, t.y + t.h / 2], [t.x + t.w + o, t.y + t.h / 2], [t.x + t.w / 2, t.y - o], [t.x + t.w / 2, t.y + t.h + o]);
+            });
+            const unit = Math.min(Math.max(W, H), Math.max(H, 360));
+            let best = null, bestScore = -Infinity;
+            anchors.forEach(([x, y], ai) => [0.45, 0.55, 0.65, 0.78, 0.92, 1.08, 1.25, 1.5, 1.8, 2.2, 2.7].forEach((k, ki) => {
+                const c = { x, y, r: k * unit };
+                let score = 0;
+                for (const t of R) {
+                    const cov = t.pts.filter(p => inside(c, p)).length / t.pts.length;
+                    if (!t.zones) { score += 0.6 * value(cov); continue; }   // üres csempe: csak az ív számít
+                    const zone = Math.max(...t.zones.map(z => z.filter(p => inside(c, p)).length / z.length));
+                    // ha a szöveg alatt nincs (majdnem) csupa kék, az nagy hiba: fehér betű a világos lilán nehezen olvasható
+                    score += value(cov) + 0.9 * zone - 2.5 * Math.max(0, 0.92 - zone);
+                }
+                score += jitter(ai * 7 + ki) * 0.05;
+                if (score > bestScore) { bestScore = score; best = c; }
+            }));
+            const circle = best;
+            const dot = `<span class="uc-dot" style="left:${(circle.x - circle.r).toFixed(1)}px;top:${(circle.y - circle.r).toFixed(1)}px;width:${(2 * circle.r).toFixed(1)}px;height:${(2 * circle.r).toFixed(1)}px"></span>`;
+            const inBlue = (x, y, pad = 0) => (x - circle.x) ** 2 + (y - circle.y) ** 2 <= (circle.r - pad) ** 2;
+
+            R.forEach(t => {
+                const art = t.el.querySelector('.uc-art');
+                art.style.cssText = `left:${-t.x}px;top:${-t.y}px;width:${W}px;height:${H}px`;
+                art.innerHTML = dot;
+
+                // szöveg: abba a sarokba, ahol a legtöbb kék van alatta
+                const txt = t.el.querySelector('.uc-text');
+                if (!txt) return;
+                txt.className = 'uc-text';
+                const tw = txt.offsetWidth, th = txt.offsetHeight, lx = txt.offsetLeft, ty = txt.offsetTop;
+                const rx = t.w - lx - tw, by = t.h - ty - th;
+                const corners = [['tl', lx, ty], ['bl', lx, by], ['tr', rx, ty], ['br', rx, by]];
+                let bestCorner = 'tl', bestCov = -1, bestRect = [lx, ty];
+                corners.forEach(([name, cx, cy], ci) => {
+                    let hit = 0, tot = 0;
+                    for (let sx = 0; sx <= 6; sx++) for (let sy = 0; sy <= 4; sy++) {
+                        tot++;
+                        if (inBlue(t.x + cx + tw * sx / 6, t.y + cy + th * sy / 4, 6)) hit++;
+                    }
+                    const cov = hit / tot - ci * 0.02;
+                    if (cov > bestCov) { bestCov = cov; bestCorner = name; bestRect = [cx, cy]; }
+                });
+                if (bestCorner !== 'tl') txt.classList.add('at-' + bestCorner);
+
+                // ikon (ha van): fehér korongban a kör ívén, a szövegtől távol
+                const icon = t.el.querySelector('.uc-icon');
+                if (!icon) return;
+                const size = t.big ? 92 : t.el.classList.contains('uc-M') ? 68 : 56;
+                const pad = size / 2 + 10;
+                const [rx0, ry0] = bestRect;
+                const gapToText = (px, py) => Math.hypot(Math.max(rx0 - px, 0, px - (rx0 + tw)), Math.max(ry0 - py, 0, py - (ry0 + th)));
+                let spot = null, spotScore = -Infinity;
+                for (let a = 0; a < 360; a += 3) {
+                    const px = circle.x + circle.r * Math.cos(a * Math.PI / 180) - t.x, py = circle.y + circle.r * Math.sin(a * Math.PI / 180) - t.y;
+                    if (px < pad || py < pad || px > t.w - pad || py > t.h - pad) continue;
+                    const free = gapToText(px, py) - size / 2;
+                    if (free < 10) continue;
+                    const sc = Math.min(free, 120) + px * 0.25;
+                    if (sc > spotScore) { spotScore = sc; spot = [px, py]; }
+                }
+                if (!spot) {
+                    const opts = [[t.w - pad, t.h - pad], [t.w - pad, pad], [pad, t.h - pad], [pad, pad]];
+                    opts.sort((a, b) => gapToText(b[0], b[1]) - gapToText(a[0], a[1]));
+                    if (gapToText(opts[0][0], opts[0][1]) - size / 2 >= 10) spot = opts[0];
+                }
+                if (!spot) { icon.hidden = true; return; }
+                icon.hidden = false;
+                icon.style.cssText = `width:${size}px;height:${size}px;left:${spot[0].toFixed(1)}px;top:${spot[1].toFixed(1)}px`;
+            });
+        }
+
+
+        /* =====================================================================
+           Indítás
+           ===================================================================== */
+        function renderAll(data) {
+            siteData = data || {};
+            renderCalendar(siteData.esemenyek);
+            const hasKisokos = renderTiles('kisokos-grid', siteData.kisokos, MAX_KISOKOS, { marks: true });
+            if (!hasKisokos) document.querySelector('.top-row').style.gridTemplateColumns = 'minmax(0, 1fr)';
+            renderPrompts(siteData.promptok);
+            renderTiles('blue-grid', siteData.kekSav, MAX_BLUE);
+            renderPromo(siteData.promo);
+            renderUsecases(siteData.usecases);
+        }
+
+        fetch('data.json', { cache: 'no-cache' })
+            .then(r => r.json())
+            .then(renderAll)
+            .catch(e => console.error('Hiba a JSON betöltésekor:', e));
+    </script>
+</body>
+</html>

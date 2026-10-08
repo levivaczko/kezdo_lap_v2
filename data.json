@@ -1,0 +1,198 @@
+{
+    "kisokos": [
+        {
+            "img": "img/clip.png",
+            "title": "AI jelölési kötelezettség",
+            "sub": "Új szabályzat",
+            "link": "#",
+            "mark": true,
+            "date": "2026-10-02"
+        },
+        {
+            "img": "img/help.png",
+            "title": "Milyen Copilot licencem van?",
+            "sub": "Útmutató",
+            "link": "#",
+            "mark": false
+        },
+        {
+            "title": "Prompt alapok",
+            "sub": "5 szabály a jó kérdéshez",
+            "link": "#",
+            "mark": false
+        },
+        {
+            "title": "Adatkezelés",
+            "sub": "Mit nem tölthetsz fel",
+            "link": "#",
+            "mark": false
+        }
+    ],
+    "promptok": [
+        {
+            "title": "Meeting összefoglaló",
+            "text": "Foglald össze az alábbi megbeszélés jegyzetét 5 pontban. Külön listázd a döntéseket, és a teendőket felelőssel és határidővel.\n\nJegyzet: [ide másold a jegyzetet]"
+        },
+        {
+            "title": "Udvarias e-mail válasz",
+            "text": "Írj udvarias, tömör választ az alábbi e-mailre. A hangnem legyen [hivatalos / közvetlen]. Ezt szeretném üzenni: [a lényeg]\n\nE-mail: [ide másold]"
+        },
+        {
+            "title": "Excel képlet magyarázat",
+            "text": "Magyarázd el lépésről lépésre, mit csinál ez az Excel képlet, és javasolj egyszerűbb változatot, ha van: [képlet]"
+        },
+        {
+            "title": "Vezetői kivonat",
+            "text": "Készíts egyoldalas vezetői összefoglalót az alábbi dokumentumból: fő megállapítások, kockázatok, javasolt következő lépések. Legfeljebb 200 szó. [dokumentum szövege]"
+        }
+    ],
+    "kekSav": [
+        {
+            "title": "Oktatások",
+            "sub": "Képzések, workshopok",
+            "link": "#"
+        },
+        {
+            "title": "Irányelvek",
+            "sub": "Mit szabad, mit nem",
+            "link": "#"
+        },
+        {
+            "title": "Hírek",
+            "sub": "AI újdonságok a cégnél",
+            "link": "#"
+        },
+        {
+            "title": "GYIK",
+            "sub": "Gyakori kérdések",
+            "link": "#"
+        }
+    ],
+    "promo": [
+        {
+            "title": "Kalóriaszámolt heti étlap",
+            "img": "img/etlap.jpg",
+            "link": "#"
+        },
+        {
+            "title": "Engedélyezett AI eszközök listája",
+            "img": "img/eszkozok.jpg",
+            "link": "#"
+        }
+    ],
+    "usecases": [
+        {
+            "title": "Gépkönyv fordítás AI-jal",
+            "sub": "Több száz oldal műszaki dokumentáció napok helyett órák alatt",
+            "size": "L",
+            "link": "#",
+            "img": "img/ico_onenote.png"
+        },
+        {
+            "title": "Mermaid diagramok",
+            "sub": "Folyamatábra szövegből",
+            "size": "S",
+            "link": "#"
+        },
+        {
+            "title": "Tömeges e-mail",
+            "sub": "Személyre szabott levelek",
+            "size": "S",
+            "link": "#"
+        },
+        {
+            "title": "Shopfloor layout felület",
+            "sub": "Csarnok-elrendezés tervezése AI segítséggel",
+            "size": "M",
+            "link": "#",
+            "img": "img/ico_excel.png"
+        },
+        {
+            "title": "Számla-feldolgozás",
+            "sub": "PDF-ből Excel sor, kézi gépelés nélkül",
+            "size": "M",
+            "link": "#"
+        },
+        {
+            "title": "Meeting monitorozás",
+            "sub": "Automatikus jegyzőkönyv",
+            "size": "S",
+            "link": "#"
+        },
+        {
+            "title": "OneNote Transcribe",
+            "sub": "Jegyzet hangfelvételből",
+            "size": "S",
+            "link": "#"
+        },
+        {
+            "title": "Ajánlatkészítés Copilottal",
+            "sub": "Sablonból kész ajánlat percek alatt",
+            "size": "L",
+            "link": "#",
+            "img": "img/ico_teams.png"
+        },
+        {
+            "title": "Szerződés-ellenőrzés",
+            "sub": "Kockázatos pontok kiemelése",
+            "size": "M",
+            "link": "#"
+        },
+        {
+            "title": "Tanulási útvonal",
+            "sub": "Személyre szabott képzési terv",
+            "size": "S",
+            "link": "#"
+        }
+    ],
+    "esemenyek": [
+        {
+            "date": "2026-10-01",
+            "start": "10:00",
+            "end": "11:00",
+            "title": "Lejárt esemény",
+            "location": "Teams"
+        },
+        {
+            "date": "2026-10-08",
+            "start": "14:00",
+            "end": "15:00",
+            "title": "AI kávészünet — kérdezz bátran",
+            "location": "Teams",
+            "link": "https://teams.microsoft.com/l/meetup-join/teszt",
+            "desc": "Kötetlen 30 perc: hozd a kérdéseidet a Copilotról, promptokról, vagy arról, mire használható az AI a csapatodban.\nNem kell előre jelentkezni."
+        },
+        {
+            "date": "2026-10-09",
+            "start": "09:00",
+            "end": "10:30",
+            "title": "Copilot alapok workshop",
+            "location": "Pécs, B tárgyaló",
+            "desc": "Gyakorlati bevezető: e-mail, Teams-összefoglaló, Excel és PowerPoint Copilottal.\nHozd a laptopodat!"
+        },
+        {
+            "date": "2026-10-15",
+            "start": "13:00",
+            "end": "14:00",
+            "title": "Prompt klinika",
+            "location": "Teams",
+            "link": "https://koerbergroup.sharepoint.com/sites/AI",
+            "desc": "Elhozod a promptodat, közösen jobbá tesszük. Max. 10 fő."
+        },
+        {
+            "date": "2026-10-22",
+            "start": "",
+            "end": "",
+            "title": "AI nap",
+            "location": "Pécs",
+            "desc": "Egész napos program előadásokkal és bemutatókkal a pécsi irodában."
+        },
+        {
+            "date": "2026-11-05",
+            "start": "10:00",
+            "end": "12:00",
+            "title": "Power Automate + AI: haladó automatizálás",
+            "location": "Teams"
+        }
+    ]
+}

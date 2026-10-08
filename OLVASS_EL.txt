@@ -1,0 +1,10 @@
+AI oldal v2 — helyi teszt
+
+1. Csomagold ki egy KÜLÖN mappába (ne a repo mappájába, mert az ottani data.json-t felülírná).
+2. Nyiss parancssort ebben a mappában, és futtasd:
+       python -m http.server 8000
+3. Böngészőben: http://localhost:8000
+
+Duplakattintással (file://) nem működik: a böngésző ilyenkor nem engedi betölteni a data.json-t.
+
+A naptár események 2026. októberi-novemberi dátumokkal vannak; ami elmúlt, az oldal magától elrejti.
