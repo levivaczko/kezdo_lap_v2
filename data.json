@@ -83,13 +83,6 @@
     ],
     "usecases": [
         {
-            "title": "Szerződés-ellenőrzés",
-            "sub": "Kockázatos pontok kiemelése",
-            "size": "M",
-            "link": "https://koerbergroup.sharepoint.com/sites/AI",
-            "date": "2026-10-01"
-        },
-        {
             "title": "OneNote Transcribe",
             "sub": "Jegyzet hangfelvételből",
             "size": "S",
