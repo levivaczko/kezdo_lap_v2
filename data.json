@@ -1,29 +1,31 @@
 {
     "kisokos": [
         {
-            "img": "img/clip.png",
+            "img": "img/clipboard-text.png",
             "title": "AI jelölési kötelezettség",
             "sub": "Új szabályzat",
-            "link": "#",
+            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/%C3%9Aj-AI-jel%C3%B6l%C3%A9si-k%C3%B6telezetts%C3%A9g-2026.-augusztus-2-t%C3%B3l.aspx?d=w62414f5942ed47438c87f8a17465e664&csf=1&web=2&share=IQBZT0Fi7UJDR4yH-KF0ZeZkAdWVkSpwuWQVlU-SZppFe2U&e=jgJ7w5",
             "mark": true
         },
         {
-            "img": "img/help.png",
+            "img": "img/prompt.png",
+            "title": "Promptolás alapjai",
+            "sub": "Útmutató",
+            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Promptol%C3%A1s-alapjai--%C3%ADgy-k%C3%A9rj-jobb-v%C3%A1laszt-az-AI-t%C3%B3l.aspx?d=wd58155ad3d654398894db2a2c1694d5b&csf=1&web=2&share=IQCtVYHVZT2YQ4lNsqLBaU1bAXIOrUeaAPmWa1OOBmq_-uw&e=FpyMHV",
+            "mark": false
+        },
+        {
+            "img": "img/vs.png",
+            "title": "Copilot Basic vagy Pro?",
+            "sub": "Útmutató",
+            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Copilot-Chat-vagy-Microsoft-365-Copilot--Mi-a-k%C3%BCl%C3%B6nbs%C3%A9g-.aspx?d=w28aa1374f2794cd89ddf6985b1dabe17&csf=1&web=2&share=IQB0E6ooefLYTJ3faYWx2r4XAbpZU04m7GTG4SXhLh7ueW0&e=JOIlGC",
+            "mark": false
+        },
+        {
+            "img": "img/kerdojel.png",
             "title": "Milyen Copilot licencem van?",
             "sub": "Útmutató",
-            "link": "#",
-            "mark": false
-        },
-        {
-            "title": "Prompt alapok",
-            "sub": "5 szabály a jó kérdéshez",
-            "link": "#",
-            "mark": false
-        },
-        {
-            "title": "Adatkezelés",
-            "sub": "Mit nem tölthetsz fel",
-            "link": "#",
+            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/%C3%8Dgy-ellen%C5%91rizheted-a-Copilot-licencedet.aspx?d=wf577bf7a106e431d8a87fa45bb6ec8f8&csf=1&web=2&share=IQB6v3f1bhAdQ4qH-kW7bsj4ASW56vfARNm0QJX1LiqGWO8&e=0O6Dqv",
             "mark": false
         }
     ],
@@ -49,34 +51,34 @@
         {
             "title": "Oktatások",
             "sub": "Képzések, workshopok",
-            "link": "#"
+            "link": "https://google.com"
         },
         {
             "title": "Irányelvek",
             "sub": "Mit szabad, mit nem",
-            "link": "#"
+            "link": "https://google.com"
         },
         {
             "title": "Hírek",
             "sub": "AI újdonságok a cégnél",
-            "link": "#"
+            "link": "https://google.com"
         },
         {
             "title": "GYIK",
             "sub": "Gyakori kérdések",
-            "link": "#"
+            "link": "https://google.com"
         }
     ],
     "promo": [
         {
             "title": "Kalóriaszámolt heti étlap",
             "img": "img/etlap.jpg",
-            "link": "#"
+            "link": "https://google.com"
         },
         {
             "title": "Engedélyezett AI eszközök listája",
-            "img": "img/eszkozok.jpg",
-            "link": "#"
+            "img": "img/eszkozok_listaja.jpg",
+            "link": "https://google.com"
         }
     ],
     "usecases": [
@@ -84,64 +86,91 @@
             "title": "Gépkönyv fordítás AI-jal",
             "sub": "Több száz oldal műszaki dokumentáció napok helyett órák alatt",
             "size": "L",
-            "link": "#",
-            "img": "img/ico_onenote.png"
+            "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDMP1rgeW-_TLQBgtozj8kjAbD5f_H4xoXhX7J4MpTO_Zw",
+            "date": "2026-09-02",
+            "img": "img/ico_lila.png"
         },
         {
             "title": "Mermaid diagramok",
             "sub": "Folyamatábra szövegből",
             "size": "S",
-            "link": "#"
+            "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAKK8C6ZwRxQ5GPpk53AR-0ARkkh6U2yMsS0tOvB_yQfpc",
+            "date": "2026-09-10"
         },
         {
             "title": "Tömeges e-mail",
             "sub": "Személyre szabott levelek",
             "size": "S",
-            "link": "#"
+            "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAlTYukroLrSL1GIAsVEj_tAacHwPue06aVXXAJtp4nsv8",
+            "date": "2026-09-15"
         },
         {
             "title": "Shopfloor layout felület",
             "sub": "Csarnok-elrendezés tervezése AI segítséggel",
             "size": "M",
-            "link": "#",
-            "img": "img/ico_excel.png"
+            "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQA0Ho-5OzinT42TFt4cT6iWASARVRs0-f33dpd06ra7zSg",
+            "date": "2026-09-20",
+            "icons": [
+                "img/ico_narancs.png",
+                "img/ico_kek.png",
+                "img/ico_zold.png"
+            ]
         },
         {
             "title": "Számla-feldolgozás",
             "sub": "PDF-ből Excel sor, kézi gépelés nélkül",
             "size": "M",
-            "link": "#"
+            "link": "https://koerbergroup.sharepoint.com/sites/AI",
+            "date": "2026-10-12",
+            "icons": [
+                "img/ico_zold.png",
+                "img/ico_narancs.png"
+            ]
         },
         {
             "title": "Meeting monitorozás",
             "sub": "Automatikus jegyzőkönyv",
             "size": "S",
-            "link": "#"
+            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Automatiz%C3%A1lt-meeting-monitoroz%C3%A1s.aspx?csf=1&web=1&share=IQA1LRPLLEl9R4QkksKkyrPXASOIHn5VwBwCvARUAwp2Qyw&e=6cRve3",
+            "date": "2026-09-25"
         },
         {
             "title": "OneNote Transcribe",
             "sub": "Jegyzet hangfelvételből",
             "size": "S",
-            "link": "#"
+            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Hat%C3%A9konyabb-jegyzetel%C3%A9s-szem%C3%A9lyes-megbesz%C3%A9l%C3%A9seken-a-OneNote-Transcribe-funkci%C3%B3j%C3%A1val.aspx?d=w4bef96b829354a1bb472636e22779190&csf=1&web=1&e=66z5lA",
+            "date": "2026-09-28"
         },
         {
             "title": "Ajánlatkészítés Copilottal",
             "sub": "Sablonból kész ajánlat percek alatt",
             "size": "L",
-            "link": "#",
-            "img": "img/ico_teams.png"
+            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Hogyan-k%C3%A9sz%C3%ADts%C3%BCnk-professzion%C3%A1lis-PDF-eket-%C3%A9s-prezent%C3%A1ci%C3%B3kat-a-Copilot-seg%C3%ADts%C3%A9g%C3%A9vel-.aspx?d=w36f04636ec874c7aa8439b1bbc754dab&csf=1&web=1&e=R2yBoI",
+            "date": "2026-10-08",
+            "icons": [
+                "img/ico_kek.png",
+                "img/ico_zold.png",
+                "img/ico_lila.png"
+            ]
         },
         {
             "title": "Szerződés-ellenőrzés",
             "sub": "Kockázatos pontok kiemelése",
             "size": "M",
-            "link": "#"
+            "link": "https://koerbergroup.sharepoint.com/sites/AI",
+            "date": "2026-10-01"
         },
         {
             "title": "Tanulási útvonal",
             "sub": "Személyre szabott képzési terv",
             "size": "S",
-            "link": "#"
+            "link": "https://koerbergroup.sharepoint.com/sites/AI",
+            "date": "2026-10-05",
+            "icons": [
+                "img/ico_kek.png",
+                "img/ico_lila.png",
+                "img/ico_narancs.png"
+            ]
         }
     ],
     "esemenyek": [
@@ -153,7 +182,7 @@
             "location": "Teams"
         },
         {
-            "date": "2026-10-08",
+            "date": "2026-10-13",
             "start": "14:00",
             "end": "15:00",
             "title": "AI kávészünet — kérdezz bátran",
@@ -162,7 +191,7 @@
             "desc": "Kötetlen 30 perc: hozd a kérdéseidet a Copilotról, promptokról, vagy arról, mire használható az AI a csapatodban.\nNem kell előre jelentkezni."
         },
         {
-            "date": "2026-10-09",
+            "date": "2026-10-14",
             "start": "09:00",
             "end": "10:30",
             "title": "Copilot alapok workshop",
@@ -170,7 +199,7 @@
             "desc": "Gyakorlati bevezető: e-mail, Teams-összefoglaló, Excel és PowerPoint Copilottal.\nHozd a laptopodat!"
         },
         {
-            "date": "2026-10-15",
+            "date": "2026-10-20",
             "start": "13:00",
             "end": "14:00",
             "title": "Prompt klinika",
@@ -179,7 +208,7 @@
             "desc": "Elhozod a promptodat, közösen jobbá tesszük. Max. 10 fő."
         },
         {
-            "date": "2026-10-22",
+            "date": "2026-10-27",
             "start": "",
             "end": "",
             "title": "AI nap",
@@ -187,7 +216,7 @@
             "desc": "Egész napos program előadásokkal és bemutatókkal a pécsi irodában."
         },
         {
-            "date": "2026-11-05",
+            "date": "2026-11-10",
             "start": "10:00",
             "end": "12:00",
             "title": "Power Automate + AI: haladó automatizálás",
