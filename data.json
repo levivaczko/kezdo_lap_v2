@@ -83,17 +83,6 @@
     ],
     "usecases": [
         {
-            "title": "Számla-feldolgozás",
-            "sub": "PDF-ből Excel sor, kézi gépelés nélkül",
-            "size": "M",
-            "link": "https://koerbergroup.sharepoint.com/sites/AI",
-            "date": "2026-10-12",
-            "icons": [
-                "img/ico_zold.png",
-                "img/ico_narancs.png"
-            ]
-        },
-        {
             "title": "Ajánlatkészítés Copilottal",
             "sub": "Sablonból kész ajánlat percek alatt",
             "size": "L",
