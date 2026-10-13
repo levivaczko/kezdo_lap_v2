@@ -83,18 +83,6 @@
     ],
     "usecases": [
         {
-            "title": "Tanulási útvonal",
-            "sub": "Személyre szabott képzési terv",
-            "size": "S",
-            "link": "https://koerbergroup.sharepoint.com/sites/AI",
-            "date": "2026-10-05",
-            "icons": [
-                "img/ico_kek.png",
-                "img/ico_lila.png",
-                "img/ico_narancs.png"
-            ]
-        },
-        {
             "title": "Szerződés-ellenőrzés",
             "sub": "Kockázatos pontok kiemelése",
             "size": "M",
