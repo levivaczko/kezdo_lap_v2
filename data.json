@@ -128,6 +128,10 @@
             "title": "OneNote Transcribe",
             "sub": "Jegyzet hangfelvételből",
             "size": "S",
+            "icons": [
+                "img/one-note_128x128.png",
+                "img/copilot-color_128x128.png"
+            ],
             "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Hat%C3%A9konyabb-jegyzetel%C3%A9s-szem%C3%A9lyes-megbesz%C3%A9l%C3%A9seken-a-OneNote-Transcribe-funkci%C3%B3j%C3%A1val.aspx?d=w4bef96b829354a1bb472636e22779190&csf=1&web=1&e=66z5lA",
             "date": "2026-09-28"
         },
