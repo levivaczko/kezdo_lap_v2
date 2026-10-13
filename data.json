@@ -166,9 +166,13 @@
             "date": "2026-09-15"
         },
         {
-            "title": "Mermaid diagramok",
+            "title": "Mermaid diagram generálás",
             "sub": "Folyamatábra szövegből",
             "size": "S",
+            "icons": [
+                "img/langdock.png",
+                "img/copilot-color_128x128.png"
+            ],
             "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAKK8C6ZwRxQ5GPpk53AR-0ARkkh6U2yMsS0tOvB_yQfpc",
             "date": "2026-09-10"
         },
