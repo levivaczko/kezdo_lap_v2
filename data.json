@@ -154,6 +154,10 @@
             "title": "Tömeges e-mail",
             "sub": "Személyre szabott levelek",
             "size": "S",
+            "icons": [
+                "img/microsoft-outlook_128x128.png",
+                "img/copilot-color_128x128.png"
+            ],
             "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAlTYukroLrSL1GIAsVEj_tAacHwPue06aVXXAJtp4nsv8",
             "date": "2026-09-15"
         },
