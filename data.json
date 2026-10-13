@@ -139,6 +139,10 @@
             "title": "Meeting monitorozás",
             "sub": "Automatikus jegyzőkönyv",
             "size": "S",
+            "icons": [
+                "img/power-automate_128x128.png",
+                "img/copilot-color_128x128.png"
+            ],
             "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Automatiz%C3%A1lt-meeting-monitoroz%C3%A1s.aspx?csf=1&web=1&share=IQA1LRPLLEl9R4QkksKkyrPXASOIHn5VwBwCvARUAwp2Qyw&e=6cRve3",
             "date": "2026-09-25"
         },
