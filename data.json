@@ -83,40 +83,6 @@
     ],
     "usecases": [
         {
-            "title": "Gépkönyv fordítás AI-jal",
-            "sub": "Több száz oldal műszaki dokumentáció napok helyett órák alatt",
-            "size": "L",
-            "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDMP1rgeW-_TLQBgtozj8kjAbD5f_H4xoXhX7J4MpTO_Zw",
-            "date": "2026-09-02",
-            "img": "img/ico_lila.png"
-        },
-        {
-            "title": "Mermaid diagramok",
-            "sub": "Folyamatábra szövegből",
-            "size": "S",
-            "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAKK8C6ZwRxQ5GPpk53AR-0ARkkh6U2yMsS0tOvB_yQfpc",
-            "date": "2026-09-10"
-        },
-        {
-            "title": "Tömeges e-mail",
-            "sub": "Személyre szabott levelek",
-            "size": "S",
-            "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAlTYukroLrSL1GIAsVEj_tAacHwPue06aVXXAJtp4nsv8",
-            "date": "2026-09-15"
-        },
-        {
-            "title": "Shopfloor layout felület",
-            "sub": "Csarnok-elrendezés tervezése AI segítséggel",
-            "size": "M",
-            "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQA0Ho-5OzinT42TFt4cT6iWASARVRs0-f33dpd06ra7zSg",
-            "date": "2026-09-20",
-            "icons": [
-                "img/ico_narancs.png",
-                "img/ico_kek.png",
-                "img/ico_zold.png"
-            ]
-        },
-        {
             "title": "Számla-feldolgozás",
             "sub": "PDF-ből Excel sor, kézi gépelés nélkül",
             "size": "M",
@@ -126,20 +92,6 @@
                 "img/ico_zold.png",
                 "img/ico_narancs.png"
             ]
-        },
-        {
-            "title": "Meeting monitorozás",
-            "sub": "Automatikus jegyzőkönyv",
-            "size": "S",
-            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Automatiz%C3%A1lt-meeting-monitoroz%C3%A1s.aspx?csf=1&web=1&share=IQA1LRPLLEl9R4QkksKkyrPXASOIHn5VwBwCvARUAwp2Qyw&e=6cRve3",
-            "date": "2026-09-25"
-        },
-        {
-            "title": "OneNote Transcribe",
-            "sub": "Jegyzet hangfelvételből",
-            "size": "S",
-            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Hat%C3%A9konyabb-jegyzetel%C3%A9s-szem%C3%A9lyes-megbesz%C3%A9l%C3%A9seken-a-OneNote-Transcribe-funkci%C3%B3j%C3%A1val.aspx?d=w4bef96b829354a1bb472636e22779190&csf=1&web=1&e=66z5lA",
-            "date": "2026-09-28"
         },
         {
             "title": "Ajánlatkészítés Copilottal",
@@ -154,13 +106,6 @@
             ]
         },
         {
-            "title": "Szerződés-ellenőrzés",
-            "sub": "Kockázatos pontok kiemelése",
-            "size": "M",
-            "link": "https://koerbergroup.sharepoint.com/sites/AI",
-            "date": "2026-10-01"
-        },
-        {
             "title": "Tanulási útvonal",
             "sub": "Személyre szabott képzési terv",
             "size": "S",
@@ -171,6 +116,64 @@
                 "img/ico_lila.png",
                 "img/ico_narancs.png"
             ]
+        },
+        {
+            "title": "Szerződés-ellenőrzés",
+            "sub": "Kockázatos pontok kiemelése",
+            "size": "M",
+            "link": "https://koerbergroup.sharepoint.com/sites/AI",
+            "date": "2026-10-01"
+        },
+        {
+            "title": "OneNote Transcribe",
+            "sub": "Jegyzet hangfelvételből",
+            "size": "S",
+            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Hat%C3%A9konyabb-jegyzetel%C3%A9s-szem%C3%A9lyes-megbesz%C3%A9l%C3%A9seken-a-OneNote-Transcribe-funkci%C3%B3j%C3%A1val.aspx?d=w4bef96b829354a1bb472636e22779190&csf=1&web=1&e=66z5lA",
+            "date": "2026-09-28"
+        },
+        {
+            "title": "Meeting monitorozás",
+            "sub": "Automatikus jegyzőkönyv",
+            "size": "S",
+            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Automatiz%C3%A1lt-meeting-monitoroz%C3%A1s.aspx?csf=1&web=1&share=IQA1LRPLLEl9R4QkksKkyrPXASOIHn5VwBwCvARUAwp2Qyw&e=6cRve3",
+            "date": "2026-09-25"
+        },
+        {
+            "title": "Shopfloor layout felület",
+            "sub": "Csarnok-elrendezés tervezése AI segítséggel",
+            "size": "M",
+            "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQA0Ho-5OzinT42TFt4cT6iWASARVRs0-f33dpd06ra7zSg",
+            "date": "2026-09-20",
+            "icons": [
+                "img/ico_narancs.png",
+                "img/ico_kek.png",
+                "img/ico_zold.png"
+            ]
+        },
+        {
+            "title": "Tömeges e-mail",
+            "sub": "Személyre szabott levelek",
+            "size": "S",
+            "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAlTYukroLrSL1GIAsVEj_tAacHwPue06aVXXAJtp4nsv8",
+            "date": "2026-09-15"
+        },
+        {
+            "title": "Mermaid diagramok",
+            "sub": "Folyamatábra szövegből",
+            "size": "S",
+            "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAKK8C6ZwRxQ5GPpk53AR-0ARkkh6U2yMsS0tOvB_yQfpc",
+            "date": "2026-09-10"
+        },
+        {
+            "title": "Gépkönyv fordítás AI-jal",
+            "sub": "Több száz oldal műszaki dokumentáció napok helyett órák alatt",
+            "size": "L",
+            "icons": [
+                "img/deepl.png",
+                "img/langdock.png"
+            ],
+            "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDMP1rgeW-_TLQBgtozj8kjAbD5f_H4xoXhX7J4MpTO_Zw",
+            "date": "2026-09-02"
         }
     ],
     "esemenyek": [
