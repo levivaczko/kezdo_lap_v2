@@ -72,12 +72,12 @@
     "promo": [
         {
             "title": "Kalóriaszámolt heti étlap",
-            "img": "img/etlap.jpg",
+            "img": "img/kaloria_szamolt_etlap.jpg",
             "link": "https://google.com"
         },
         {
             "title": "Engedélyezett AI eszközök listája",
-            "img": "img/eszkozok_listaja.jpg",
+            "img": "img/eng_eszkozok_listaja.jpg",
             "link": "https://google.com"
         }
     ],
