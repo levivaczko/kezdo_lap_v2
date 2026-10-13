@@ -83,18 +83,6 @@
     ],
     "usecases": [
         {
-            "title": "Ajánlatkészítés Copilottal",
-            "sub": "Sablonból kész ajánlat percek alatt",
-            "size": "L",
-            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Hogyan-k%C3%A9sz%C3%ADts%C3%BCnk-professzion%C3%A1lis-PDF-eket-%C3%A9s-prezent%C3%A1ci%C3%B3kat-a-Copilot-seg%C3%ADts%C3%A9g%C3%A9vel-.aspx?d=w36f04636ec874c7aa8439b1bbc754dab&csf=1&web=1&e=R2yBoI",
-            "date": "2026-10-08",
-            "icons": [
-                "img/ico_kek.png",
-                "img/ico_zold.png",
-                "img/ico_lila.png"
-            ]
-        },
-        {
             "title": "Tanulási útvonal",
             "sub": "Személyre szabott képzési terv",
             "size": "S",
